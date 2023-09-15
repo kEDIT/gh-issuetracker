@@ -79,7 +79,8 @@ func (s *Server) ListIssuesHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	//TODO: might be able to remove Owner, Repo, and Issues from AppState
+	// NOTE: AppState doesn't really need to store owner or repo information, it's just there to illustrate
+	// how I would hold application state in a larger project
 	s.State.Owner = owner
 	s.State.Repo = repo
 
@@ -122,7 +123,7 @@ func (s *Server) ListIssuesHandler(w http.ResponseWriter, r *http.Request) {
 var fs embed.FS
 
 // FIXME: should a global template be used here? Seems bad.
-var tmpl = template.Must(template.ParseFS(fs, "static/*.html", "static/*.css"))
+var tmpl = template.Must(template.ParseFS(fs, "static/*.html", "static/*.css", "static/*.js"))
 
 func main() {
 
