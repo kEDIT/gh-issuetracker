@@ -118,7 +118,7 @@ func (s *Server) ListIssuesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//go:embed static/*.css static/*.html static/*.js
+//go:embed static
 var fs embed.FS
 
 // FIXME: should a global template be used here? Seems bad.
