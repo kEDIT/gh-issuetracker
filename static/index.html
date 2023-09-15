@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GitHub Issue Viewer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+  <script src="/static/htmx.min.js"></script>
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+</head>
+<body>
+  <div class="row text-center">
+    <h1 class="display-3">GitHub Issue Tracker</h1>
+    <hr>
+  </div>
+  <br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-auto">
+        <form id="inputForm" hx-post="/list" hx-target="#issueList">
+          <fieldset>
+            <legend> Search Me! </legend>
+            <div class="form-group">
+              <label for="repoURL" class="form-label mt-4">Repository</label>
+              <input type="url" class="form-control" id="repoURL" name="repoURL" aria-describedby="repoHelp" placeholder="https://github.com/kubernetes/kubernetes">
+              <small id="repoHelp" class="form-text text-muted">* Must be a valid public GitHub repository</small>
+            </div>
+            <div class="form-group">
+              <label for="issueState" class="form-label mt-4">Issue State</label>
+              <select class="form-select" name="issueState" id="issueState" form="inputForm">
+                <option value="all" selected="selected">All</option>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+              </select>
+              <br>
+              <label for="sortBy" class="form-label mt-4">Sort By</label>
+              <select class="form-select" name="sortBy" id="sortBy" form="inputForm">
+                <option class="form-text text-muted" value="all">All</option>
+                <option value="created">Created</option>
+                <option value="updated">Updated</option>
+              </select>
+              <label for="direction" class="form-label mt-f">Direction</label>
+              <select class="form-select" name="direction" id="direction" aria-describedby=orderHelp form="inputForm">
+                <option value="desc" selected="selected">Desc</option>
+                <option value="asc">Asc</option>
+              </select>
+              <small id="orderHelp" class="form-text text-muted">Latest (Desc), Oldest (Asc)</small>
+            </div>
+          </fieldset>
+          <br>
+          <input class="btn btn-outline-primary" type="submit">
+        </form>
+      </div>
+      <div class="col-md-auto">
+        <legend> Issues </legend>
+        <div>
+          <ul class="list-group" id="issueList" hx-swap="beforeend">
+              {{ range . }}
+                {{ block "issue-list-element" .}}
+                  {{ if(eq .State "open") }}
+                    <li class="list-group-item-action bg-secondary text-white">
+                     <span class="badge bg-primary">Open</span>
+                      <small>ID: {{ .ID }}</small> <a target="_blank" rel="noopener" class="link-opacity-75-hover link-underline-dark" href="{{ .Link }}">{{.Title}}</a>
+                      <small>Updated: {{ .UpdatedAt }}</small>
+                    </li> 
+                  {{ else }}
+                    <li class="list-group-item-action bg-secondary text-white">
+                      <span class="badge bg-danger">Closed</span>
+                      <small>ID: {{ .ID }}</small> <a target="_blank" rel="noopener" class="link-opacity-75-hover link-underline-dark" href="{{ .Link }}">{{.Title}}</a>
+                      <small>Updated: {{ .UpdatedAt }}</small>
+                    </li>
+                  {{ end }}
+                {{ end }}
+              {{ end }}
+          </ul>
+        </div> 
+      </div> 
+    </div>
+  </div> 
+</body>
+</html>
