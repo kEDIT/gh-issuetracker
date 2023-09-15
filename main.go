@@ -27,12 +27,12 @@ type AppState struct {
 	Issues  []IssueSummary
 }
 
-// TODO: add created, updated, closed etc times
 type IssueSummary struct {
 	ID        int64
 	Title     string
 	Link      string // link to github issue page, not the link to the api endpoint
 	State     string
+	CreatedAt string
 	UpdatedAt string
 }
 
@@ -60,7 +60,6 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// TODO: add filter parameters
 func (s *Server) ListIssuesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Clear the `Issues slice`
@@ -95,11 +94,9 @@ func (s *Server) ListIssuesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	opts.ListOptions = github.ListOptions{
-		Page:    10,
-		PerPage: 20,
+		Page: 10,
 	}
 
-	//FIXME: should response object from `ListByRepo` be used here?
 	issues, _, err := s.apiClient.Issues.ListByRepo(ctx, s.State.Owner, s.State.Repo, opts)
 
 	if err != nil {
@@ -112,6 +109,7 @@ func (s *Server) ListIssuesHandler(w http.ResponseWriter, r *http.Request) {
 				Title:     issue.GetTitle(),
 				Link:      issue.GetHTMLURL(),
 				State:     issue.GetState(),
+				CreatedAt: issue.GetCreatedAt().Local().Format("02 Jan 06 15:04 MST"),
 				UpdatedAt: issue.GetUpdatedAt().Local().Format("02 Jan 06 15:04 MST"),
 			}
 			s.State.Issues = append(s.State.Issues, i)
@@ -123,14 +121,10 @@ func (s *Server) ListIssuesHandler(w http.ResponseWriter, r *http.Request) {
 //go:embed static/*.css static/*.html static/*.js
 var fs embed.FS
 
-// FIXME: should a global template be used here?
+// FIXME: should a global template be used here? Seems bad.
 var tmpl = template.Must(template.ParseFS(fs, "static/*.html", "static/*.css"))
 
 func main() {
-
-	//TODO: token validation for client
-
-	//FIXME: embed static assets
 
 	logHandler := slog.NewJSONHandler(os.Stdout, nil)
 	logger := slog.New(logHandler)

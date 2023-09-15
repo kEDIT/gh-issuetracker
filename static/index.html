@@ -55,21 +55,23 @@
       <div class="col-md-auto">
         <legend> Issues </legend>
         <div>
-          <ul class="list-group" id="issueList" hx-swap="beforeend">
+          <ul class="list-group pagination" id="issueList" hx-swap="beforeend">
               {{ range . }}
                 {{ block "issue-list-element" .}}
                   {{ if(eq .State "open") }}
-                    <li class="list-group-item-action bg-secondary text-white">
+                    <li class="list-group-item-action page-item bg-secondary text-white">
                      <span class="badge bg-primary">Open</span>
-                      <small>ID: {{ .ID }}</small> <a target="_blank" rel="noopener" class="link-opacity-75-hover link-underline-dark" href="{{ .Link }}">{{.Title}}</a>
-                      <small>Updated: {{ .UpdatedAt }}</small>
+                      <small>ID: {{ .ID }}</small> <a target="_blank" rel="noopener" class="page-link link-opacity-75-hover link-underline-dark" href="{{ .Link }}">{{.Title}}</a>
+                      <small>Created: {{ .CreatedAt }} - Updated: {{ .UpdatedAt }}</small>
                     </li> 
+                    <br>
                   {{ else }}
-                    <li class="list-group-item-action bg-secondary text-white">
+                    <li class="list-group-item-action page-item bg-secondary text-white">
                       <span class="badge bg-danger">Closed</span>
-                      <small>ID: {{ .ID }}</small> <a target="_blank" rel="noopener" class="link-opacity-75-hover link-underline-dark" href="{{ .Link }}">{{.Title}}</a>
-                      <small>Updated: {{ .UpdatedAt }}</small>
+                      <small>ID: {{ .ID }}</small> <a target="_blank" rel="noopener" class="page-link link-opacity-75-hover link-underline-dark" href="{{ .Link }}">{{.Title}}</a>
+                      <small>Created: {{ .CreatedAt }} - Updated: {{ .UpdatedAt }}</small>
                     </li>
+                    <br>
                   {{ end }}
                 {{ end }}
               {{ end }}
